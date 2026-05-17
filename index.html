@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Estoque Aula Web</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <section id="loginView" class="login-view">
+      <form id="loginForm" class="login-card">
+        <div class="brand compact"><div class="brand-mark">CE</div><div><strong>Estoque Aula Web</strong><span>Versao GitHub Pages</span></div></div>
+        <h1>Acesse o controle de estoque</h1>
+        <label>Usuario<input id="loginUser" value="gestor" autocomplete="username" required></label>
+        <label>Senha<input id="loginPassword" type="password" value="admin123" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Entrar</button>
+        <p id="loginMessage" class="form-message" role="status"></p>
+        <small>Login inicial: gestor / admin123. Grupos: grupo1 a grupo4 / grupo123.</small>
+      </form>
+    </section>
+
+    <div id="appView" class="app-shell hidden">
+      <aside class="sidebar" aria-label="Navegacao principal">
+        <div class="brand"><div class="brand-mark">CE</div><div><strong>Estoque Aula Web</strong><span>GitHub Pages + navegador</span></div></div>
+        <nav class="nav-list">
+          <a href="#visao-geral" class="active">Dashboard</a>
+          <a href="#movimentacoes">Movimentacoes</a>
+          <a href="#abcxyz">ABC/XYZ</a>
+          <a href="#relatorios">Relatorios</a>
+          <a href="#itens">Itens</a>
+          <a href="#usuarios">Usuarios</a>
+          <a href="#sala-aula">Sala de Aula</a>
+        </nav>
+        <div class="sidebar-card">
+          <span>Usuario ativo</span><strong id="activeUserLabel">-</strong>
+          <span>Base de dados</span><strong>Navegador local</strong>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Controle gerencial de estoque</p>
+            <h1>Controle de estoque didatico com indicadores para tomada de decisao</h1>
+          </div>
+          <div class="actions">
+            <button id="refreshData" class="secondary">Atualizar</button>
+            <button id="exportCsv" class="secondary">Exportar CSV</button>
+            <button id="exportPdf" class="primary">Relatorio PDF</button>
+            <button id="logoutBtn" class="icon-button" title="Sair" aria-label="Sair">&#9211;</button>
+          </div>
+        </header>
+
+        <section class="panel filters-panel">
+          <div class="panel-heading">
+            <div><h2>Periodo de analise</h2><p>Filtre movimentacoes, indicadores operacionais e relatorio por data.</p></div>
+            <div class="date-presets"><button class="secondary" data-range="30">30 dias</button><button class="secondary" data-range="90">90 dias</button><button class="secondary" data-range="year">Ano atual</button></div>
+          </div>
+          <div class="filter-grid">
+            <label>Data inicial<input id="startDate" type="date"></label>
+            <label>Data final<input id="endDate" type="date"></label>
+            <label>Categoria<select id="categoryFilter"></select></label>
+            <label>ABC<select id="abcMode"><option value="forecast">Previsao anual</option><option value="real">Consumo real do periodo</option></select></label>
+            <label>Buscar<input id="searchInput" type="search" placeholder="Item, SKU ou categoria"></label>
+          </div>
+        </section>
+
+        <section id="visao-geral" class="kpi-grid">
+          <article class="kpi"><span>Valor em estoque</span><strong id="stockValue">R$ 0,00</strong><small id="stockUnits">0 unidades</small></article>
+          <article class="kpi"><span>Entradas no periodo</span><strong id="periodEntries">0</strong><small id="periodEntryValue">R$ 0,00 recebidos</small></article>
+          <article class="kpi danger"><span>Abaixo do minimo</span><strong id="belowMin">0</strong><small>Itens exigem reposicao</small></article>
+          <article class="kpi"><span>Cobertura media</span><strong id="coverageDays">0 dias</strong><small>Saldo / consumo diario</small></article>
+          <article class="kpi"><span>Saidas no periodo</span><strong id="periodExits">0</strong><small id="periodExitValue">R$ 0,00 consumidos</small></article>
+          <article class="kpi"><span>Giro medio</span><strong id="avgTurnover">0,0x</strong><small>Consumo anual / estoque medio</small></article>
+          <article class="kpi warn"><span>Compra sugerida</span><strong id="suggestedPurchase">0 un.</strong><small id="suggestedPurchaseValue">R$ 0,00 estimados</small></article>
+          <article class="kpi"><span>Usuarios ativos</span><strong id="activeUsersCount">0</strong><small>Operacao registrada por pessoa</small></article>
+        </section>
+
+        <section id="movimentacoes" class="panel">
+          <div class="panel-heading"><div><h2>Movimentacoes de estoque</h2><p>Entradas e saidas ficam salvas no navegador do grupo com data, usuario e saldo.</p></div></div>
+          <div class="movement-grid">
+            <form id="stockEntryForm" class="movement-form">
+              <strong>Entrada</strong>
+              <label>SKU<input id="entrySku" list="skuOptions" required></label>
+              <label>Quantidade<input id="entryQuantity" type="number" min="1" step="1" required></label>
+              <label>Data<input id="entryDate" type="date" required></label>
+              <label>Observacao<input id="entryNote" placeholder="Fornecedor, NF ou lote"></label>
+              <button class="primary" type="submit">Registrar entrada</button>
+            </form>
+            <form id="stockExitForm" class="movement-form">
+              <strong>Saida / Consumo</strong>
+              <label>SKU<input id="exitSku" list="skuOptions" required></label>
+              <label>Quantidade<input id="exitQuantity" type="number" min="1" step="1" required></label>
+              <label>Data<input id="exitDate" type="date" required></label>
+              <label>Observacao<input id="exitNote" placeholder="Centro de custo ou pedido"></label>
+              <button class="secondary danger-action" type="submit">Registrar saida</button>
+            </form>
+          </div>
+          <datalist id="skuOptions"></datalist>
+          <p id="stockMovementMessage" class="form-message" role="status"></p>
+        </section>
+
+        <section id="abcxyz" class="panel-grid">
+          <article class="panel chart-panel"><div class="panel-heading"><div><h2>Curva ABC</h2><p>Participacao acumulada por valor de consumo anual.</p></div></div><canvas id="abcChart"></canvas></article>
+          <article class="panel chart-panel"><div class="panel-heading"><div><h2>Matriz ABC/XYZ</h2><p>Valor financeiro versus previsibilidade da demanda.</p></div></div><canvas id="matrixChart"></canvas></article>
+        </section>
+
+        <section class="panel split-panel">
+          <div><div class="panel-heading compact-heading"><div><h2>Alertas de reposicao</h2><p>Itens abaixo do minimo ou com cobertura curta.</p></div></div><div id="alerts" class="alerts"></div></div>
+          <div><div class="panel-heading compact-heading"><div><h2>Historico recente</h2><p>Ultimas movimentacoes dentro do periodo.</p></div></div><div id="historyList" class="history-list"></div></div>
+        </section>
+
+        <section id="relatorios" class="panel">
+          <div class="panel-heading table-heading"><div><h2>Relatorio para gestao</h2><p>Resumo executivo com riscos, compras sugeridas e movimentacoes por periodo.</p></div><div class="table-tools"><button id="printReport" class="primary">Imprimir / Salvar PDF</button></div></div>
+          <div id="reportPreview" class="report-preview"></div>
+        </section>
+
+        <section id="itens" class="panel">
+          <div class="panel-heading table-heading"><div><h2>Tabela de controle</h2><p>Dados locais do navegador, prontos para GitHub Pages e exportacao de relatorio.</p></div><div class="table-tools"><button id="addItem" class="primary">Adicionar item</button></div></div>
+          <div class="table-wrap"><table><thead><tr><th>SKU</th><th>Item</th><th>Tipo</th><th>Categoria</th><th>Saldo</th><th>Minimo</th><th>Custo un.</th><th>Consumo mensal</th><th>Lead time</th><th>ABC</th><th>XYZ</th><th>Cobertura</th><th>Compra</th><th>Status</th><th></th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+        </section>
+
+        <section id="usuarios" class="panel users-panel">
+          <div class="panel-heading"><div><h2>Usuarios e grupos</h2><p>Nesta versao, usuarios existem apenas no navegador que esta usando o sistema.</p></div></div>
+          <form id="userForm" class="user-form">
+            <input id="userName" placeholder="Nome" required>
+            <input id="userLogin" placeholder="Usuario de login" required>
+            <input id="userPassword" type="password" placeholder="Senha inicial" required>
+            <select id="userRole"><option>Gestor</option><option>Operador</option><option>Compras</option><option>Auditor</option></select>
+            <button class="primary" type="submit">Adicionar usuario</button>
+          </form>
+          <div id="usersList" class="users-list"></div>
+        </section>
+
+        <section id="sala-aula" class="panel classroom-panel">
+          <div class="panel-heading">
+            <div><h2>Sala de Aula</h2><p>Prepare uma pratica com quatro grupos. Cada navegador trabalha com sua propria base e exporta o resultado.</p></div>
+          </div>
+          <div class="classroom-actions">
+            <button id="setupClassroom" class="primary">Criar 4 grupos locais</button>
+            <button id="prepareActivity" class="primary">Preparar atividade</button>
+            <button id="resetMovements" class="secondary">Zerar movimentacoes</button>
+            <button id="resetScenario" class="secondary danger-action">Restaurar atividade</button>
+          </div>
+          <div class="classroom-grid">
+            <article class="report-card"><span>Logins dos grupos</span><strong>grupo1 a grupo4</strong><small>Senha: grupo123</small></article>
+            <article class="report-card"><span>Objetivo</span><strong>Comparar planejado x real</strong><small>Os alunos lancam os eventos e observam os indicadores.</small></article>
+            <article class="report-card"><span>Produto final</span><strong>Relatorio gerencial</strong><small>Cada grupo explica alertas, giro, ponto de compra e decisao de compra.</small></article>
+          </div>
+          <div class="activity-brief">
+            <h3>Roteiro de lancamentos</h3>
+            <ol>
+              <li>Grupo 1: saida PA-001, 140 un.; saida IN-101, 1800 un.; entrada IN-102, 1200 un.</li>
+              <li>Grupo 2: saida MP-202, 70 un.; saida MP-203, 24 un.; entrada MP-201, 260 un.</li>
+              <li>Grupo 3: saida PA-002, 120 un.; saida PA-004, 80 un.; entrada PA-003, 45 un.</li>
+              <li>Grupo 4: saida IN-103, 520 un.; saida IN-102, 900 un.; entrada PA-001, 80 un.</li>
+              <li>Depois comparem ABC por previsao anual versus consumo real do periodo.</li>
+            </ol>
+          </div>
+          <p id="classroomMessage" class="form-message" role="status"></p>
+        </section>
+      </main>
+    </div>
+    <section id="printArea" class="print-area"></section>
+    <template id="rowTemplate">
+      <tr>
+        <td><input data-field="sku"></td><td><input data-field="name"></td><td><select data-field="type"><option>Produto</option><option>Insumo</option></select></td><td><input data-field="category"></td>
+        <td><input data-field="stock" type="number" min="0" step="1"></td><td><input data-field="minStock" type="number" min="0" step="1"></td><td><input data-field="unitCost" type="number" min="0" step="0.01"></td><td><input data-field="monthlyDemand" type="number" min="0" step="1"></td><td><input data-field="leadTime" type="number" min="0" step="1"></td>
+        <td><span class="badge" data-value="abc"></span></td><td><span class="badge" data-value="xyz"></span></td><td data-value="coverage"></td><td data-value="suggested"></td><td><span class="status" data-value="status"></span></td><td><button class="icon-button delete" title="Remover">&times;</button></td>
+      </tr>
+    </template>
+    <script src="app.js"></script>
+  </body>
+</html>

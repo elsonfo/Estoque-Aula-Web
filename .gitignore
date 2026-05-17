@@ -1,0 +1,8 @@
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+backup-local-*/
+node_modules/
+.DS_Store
+Thumbs.db
