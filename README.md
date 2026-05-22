@@ -65,3 +65,8 @@ Depois de alguns instantes, o GitHub vai gerar o link publico da atividade.
 3. O professor orienta o roteiro de lancamentos.
 4. Cada grupo observa os indicadores antes e depois dos lancamentos.
 5. Cada grupo gera PDF ou CSV para apresentar a decisao de compra.
+
+## Uso em sala de aula
+
+Este sistema pode ser usado em atividades educacionais para simular entradas e saídas de estoque, acompanhar indicadores (como cobertura, giro e reposição) e analisar o histórico das movimentações em cada grupo.
+
